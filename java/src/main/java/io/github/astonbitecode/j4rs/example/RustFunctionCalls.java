@@ -14,11 +14,11 @@
  */
 package io.github.astonbitecode.j4rs.example;
 
-import org.astonbitecode.j4rs.api.Instance;
-import org.astonbitecode.j4rs.api.java2rust.Java2RustUtils;
+import static org.astonbitecode.j4rs.api.java2rust.Java2RustUtils.createInstance;
+import static org.astonbitecode.j4rs.api.java2rust.Java2RustUtils.getObjectCasted;
 
 import java.util.List;
-
+import org.astonbitecode.j4rs.api.Instance;
 public class RustFunctionCalls {
     private static native void fnnoargs();
 
@@ -39,7 +39,7 @@ public class RustFunctionCalls {
     private static native void fnlist(Instance<List<Integer>> i);
 
     static {
-        System.loadLibrary("rustlib");
+        System.load("/Users/home/Android/j4rs-java-call-rust/rust/target/debug/librustlib.dylib");
     }
 
     public void doCallNoArgs() {
@@ -47,31 +47,31 @@ public class RustFunctionCalls {
     }
 
     public void doCallWithStringArg(String s) {
-        fnstringarg(Java2RustUtils.createInstance(s));
+        fnstringarg(createInstance(s));
     }
 
     public void doCallWithTwoArgs(Integer i1, Integer i2) {
-        fntwoargs(Java2RustUtils.createInstance(i1), Java2RustUtils.createInstance(i2));
+        fntwoargs(createInstance(i1), createInstance(i2));
     }
 
     public void doCallWithThreeArgs(Integer i1, Integer i2, Integer i3) {
-        fnthreeargs(Java2RustUtils.createInstance(i1), Java2RustUtils.createInstance(i2), Java2RustUtils.createInstance(i3));
+        fnthreeargs(createInstance(i1), createInstance(i2), createInstance(i3));
     }
 
     public Integer addInRust(Integer i1, Integer i2) {
         Instance instance = addintegers(
-                Java2RustUtils.createInstance(i1),
-                Java2RustUtils.createInstance(i2));
-        return Java2RustUtils.getObjectCasted(instance);
+                createInstance(i1),
+                createInstance(i2));
+        return getObjectCasted(instance);
     }
 
     public void doCallWithCustomClass(MyClass myClass) {
-        fncustomobject(Java2RustUtils.createInstance(myClass));
+        fncustomobject(createInstance(myClass));
     }
 
     public MyClass doCallWithCustomClassRet() {
         Instance instance = fncustomobjectret();
-        return Java2RustUtils.getObjectCasted(instance);
+        return getObjectCasted(instance);
     }
 
     public void throwExceptionFromRust() {
@@ -79,6 +79,6 @@ public class RustFunctionCalls {
     }
 
     public void doCallWithList(List<Integer> list) {
-        fnlist(Java2RustUtils.createInstance(list));
+        fnlist(createInstance(list));
     }
 }

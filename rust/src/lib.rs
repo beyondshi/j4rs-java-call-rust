@@ -14,7 +14,8 @@
 use std::convert::TryFrom;
 use std::result::Result;
 
-use j4rs::InvocationArg;
+use j4rs::{Instance, InvocationArg, Jvm, JvmBuilder};
+use j4rs::jni_sys::JavaVM;
 use j4rs::prelude::*;
 use j4rs_derive::*;
 use serde::{Deserialize, Serialize};
@@ -22,6 +23,36 @@ use serde::{Deserialize, Serialize};
 #[call_from_java("io.github.astonbitecode.j4rs.example.RustSimpleFunctionCall.fnnoargs")]
 fn my_function_with_no_args() {
     println!("Hello from the Rust world!");
+    println!("Hello from the Rust world!1111111");
+    // Create a JVM
+    let jvm = Jvm::attach_thread().unwrap();
+    // let jvm = JvmBuilder::new().build().unwrap();
+
+    // Create a java.lang.String instance
+    let call_instance = jvm.create_instance(
+        "io.github.astonbitecode.j4rs.example.RustCallback",     // The Java class to create an instance for
+        &[],            // The `InvocationArg`s to use for the constructor call - empty for this example
+    ).unwrap();
+
+    // let boolean_instance = jvm.invoke(
+    //     &string_instance,       // The String instance created above
+    //     "isEmpty",              // The method of the String instance to invoke
+    //     &Vec::new(),            // The `InvocationArg`s to use for the invocation - empty for this example
+    // ).unwrap();
+    //
+    jvm.invoke(
+        &call_instance,    // The String instance created above
+        "RustCallBack",        // The method of the String instance to invoke
+        &[],        // The InvocationArgs to use for the invocation - empty for this example
+    ).expect("call back error");
+
+    let my_string = "一个来自Rust的a string".to_owned();
+    let i2 = InvocationArg::try_from(my_string).unwrap();    // Creates an arg of java.lang.String
+    jvm.invoke(
+        &call_instance,    // The String instance created above
+        "RustCallBack11",        // The method of the String instance to invoke
+        &[i2],        // The InvocationArgs to use for the invocation - empty for this example
+    ).expect("call back error");
 }
 
 #[call_from_java("io.github.astonbitecode.j4rs.example.RustFunctionCalls.fnstringarg")]
@@ -71,7 +102,7 @@ fn my_function_with_list_arg(list_instance1: Instance) {
 
 #[derive(Deserialize, Serialize, Debug)]
 struct MyClass {
-    number: i32
+    number: i32,
 }
 
 #[call_from_java("io.github.astonbitecode.j4rs.example.RustFunctionCalls.fncustomobject")]
@@ -84,7 +115,7 @@ fn use_custom_object(i: Instance) {
 #[call_from_java("io.github.astonbitecode.j4rs.example.RustFunctionCalls.fncustomobjectret")]
 fn ret_custom_object() -> Result<Instance, String> {
     let test_object = MyClass {
-        number : 33
+        number: 33
     };
     let ia = InvocationArg::new(&test_object, "io.github.astonbitecode.j4rs.example.MyClass");
     return Instance::try_from(ia).map_err(|error| format!("{}", error));

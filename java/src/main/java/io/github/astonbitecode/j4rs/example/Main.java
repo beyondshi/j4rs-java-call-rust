@@ -21,6 +21,13 @@ public class Main {
         var rustFnCalls = new RustSimpleFunctionCall();
         rustFnCalls.doCallNoArgs();
 
+        var rustFnCalls1 = new RustFunctionCalls();
+//        var myCalss = rustFnCalls1.doCallWithCustomClassRet();
+//        rustFnCalls1.throwExceptionFromRust();
+
+//        System.out.println("myCalss   number = " + myCalss.getNumber());
+
+
         System.out.println("\nBye!");
     }
 }

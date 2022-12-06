@@ -18,7 +18,7 @@ public class RustSimpleFunctionCall {
     private static native void fnnoargs();
 
     static {
-        System.loadLibrary("rustlib");
+        System.load("/Users/home/Android/j4rs-java-call-rust/rust/target/debug/librustlib.dylib");
     }
 
     public void doCallNoArgs() {
